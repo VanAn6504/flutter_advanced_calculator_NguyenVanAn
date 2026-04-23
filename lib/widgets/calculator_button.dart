@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class CalculatorButton extends StatefulWidget {
   final String text;
   final VoidCallback onTap;
+  final VoidCallback? onLongPress;
   final Color bgColor;
   final Color textColor;
   final bool isIcon;
@@ -12,7 +13,8 @@ class CalculatorButton extends StatefulWidget {
     super.key,
     required this.text,
     required this.onTap,
-    this.bgColor = const Color(0xFF2C2C2C),
+    this.onLongPress,
+    required this.bgColor,
     this.textColor = Colors.white,
     this.isIcon = false,
     this.icon,
@@ -22,8 +24,7 @@ class CalculatorButton extends StatefulWidget {
   State<CalculatorButton> createState() => _CalculatorButtonState();
 }
 
-class _CalculatorButtonState extends State<CalculatorButton>
-    with SingleTickerProviderStateMixin {
+class _CalculatorButtonState extends State<CalculatorButton> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
 
@@ -44,18 +45,14 @@ class _CalculatorButtonState extends State<CalculatorButton>
     super.dispose();
   }
 
-  void _onTapDown(TapDownDetails details) {
-    _controller.forward();
-  }
+  void _onTapDown(TapDownDetails details) => _controller.forward();
 
   void _onTapUp(TapUpDetails details) {
     _controller.reverse();
     widget.onTap();
   }
 
-  void _onTapCancel() {
-    _controller.reverse();
-  }
+  void _onTapCancel() => _controller.reverse();
 
   @override
   Widget build(BuildContext context) {
@@ -63,6 +60,7 @@ class _CalculatorButtonState extends State<CalculatorButton>
       onTapDown: _onTapDown,
       onTapUp: _onTapUp,
       onTapCancel: _onTapCancel,
+      onLongPress: widget.onLongPress,
       child: ScaleTransition(
         scale: _scaleAnimation,
         child: Container(
@@ -72,10 +70,11 @@ class _CalculatorButtonState extends State<CalculatorButton>
           ),
           alignment: Alignment.center,
           child: widget.isIcon
-              ? Icon(widget.icon, color: widget.textColor, size: 24)
+              ? Icon(widget.icon, color: widget.textColor, size: 28)
               : Text(
             widget.text,
             style: TextStyle(
+              fontFamily: 'Roboto',
               fontSize: 24,
               fontWeight: FontWeight.w400,
               color: widget.textColor,
